@@ -16,7 +16,7 @@ export class AuthController {
         return await this.authService.login(req.user);
     }
 
-    @UseGuards(DoesUserExist)
+    // @UseGuards(DoesUserExist)
     @Post('signup')
     async signup(@Body() user: UserDto) {
         return await this.authService.register(user);

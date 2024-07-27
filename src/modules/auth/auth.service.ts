@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { scrypt as _scrypt, randomBytes } from 'crypto';
 import { promisify } from 'util';
 import { UsersService } from '../users/users.service';
@@ -11,9 +11,9 @@ export class AuthService {
     constructor(private usersService: UsersService, private jwtService: JwtService) { }
     async register(data: UserDto) {
         // Check if email exists should return
-        const userExists = this.usersService.findOneByEmail(data.email);
+        const userExists = await this.usersService.findOneByEmail(data.email);
         if(userExists){
-            throw new BadRequestException('email in use');
+            throw new ForbiddenException('This email already exist');
         }
         // Generate salt
         const salt = randomBytes(8).toString('hex')
@@ -40,19 +40,22 @@ export class AuthService {
         if (!user) {
             return null;
         }
-        const salt = '';
-        const hash = (await scrypt(pass, salt, 32)) as Buffer;
-        if (user.password != hash.toString('hex')) {
-            return null
+        const { password, ...result } = user['dataValues'];
+        const salt = password.split('.')[0]
+        const hashedPassword = password.split('.')[1]
+        const hash = (await scrypt(pass, salt, 32)) as Buffer
+        if(hashedPassword !== hash.toString('hex')){
+            return null;
         }
-        const { password, ...result } = user;
+        console.log(result)
         return result;
     }
 
     async login(user: any) {
         const payload = { email: user.email, sub: user.id };
+        const token = await this.generateToken(payload)
         return {
-            access_token: this.generateToken(payload),
+            access_token: token,
         };
     }
 
