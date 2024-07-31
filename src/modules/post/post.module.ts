@@ -4,7 +4,7 @@ import { PostController } from './post.controller';
 import { postProviders } from './entities/post.providers';
 
 @Module({
-  controllers: [PostController],
   providers: [PostService, ...postProviders],
+  controllers: [PostController]
 })
 export class PostModule {}

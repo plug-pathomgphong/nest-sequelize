@@ -5,12 +5,20 @@ import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { DoesUserExist } from 'src/core/guards/doesUserExist.guard';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { LoginDto } from './dto/login.dto';
 
+@ApiTags('auth')
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
     @UseGuards(LocalAuthGuard)
+    @ApiBody({
+        description: 'Login api',
+        type: LoginDto
+    })
     @Post('login')
     async login(@Request() req) {
         return await this.authService.login(req.user);
@@ -24,7 +32,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get('profile')
-    getProfile(@Request() req) {
+    async getProfile(@Request() req) {
         return req.user;
     }
 }
