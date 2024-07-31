@@ -3,8 +3,9 @@ import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags('post')
 @Controller('post')
 export class PostController {
@@ -15,9 +16,9 @@ export class PostController {
         return await this.postService.findAll();
     }
     @Get(':id')
-    async findOne(@Param('id') id:number) {
+    async findOne(@Param('id') id: number) {
         const post = await this.postService.findOne(id);
-        if(!post){
+        if (!post) {
             throw new NotFoundException('This Post doesn\'t exist')
         }
 
@@ -32,20 +33,20 @@ export class PostController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
-    async update(@Param('id') id: number,@Body() updatePost: UpdatePostDto, @Request() req) {
+    async update(@Param('id') id: number, @Body() updatePost: UpdatePostDto, @Request() req) {
         const { numberOfAffectedRows, updatedPost } = await this.postService.update(id, updatePost, req.user.userId);
-        if(numberOfAffectedRows === 0){
+        if (numberOfAffectedRows === 0) {
             throw new NotFoundException('This Post doesn\'t exist');
         }
 
-        return updatePost;
+        return updatedPost;
     }
 
     @UseGuards(JwtAuthGuard)
     @Delete(':id')
     async remove(@Param('id') id: number, @Request() req) {
         const deleted = await this.postService.remove(id, req.user.userId);
-        if(deleted === 0){
+        if (deleted === 0) {
             throw new NotFoundException('This Post doesn\'t exist');
         }
 

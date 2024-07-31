@@ -19,7 +19,7 @@ export class PostService {
         return await this.postRepo.create<Post>({ ...newPost, userId });
     }
     async update(id: number, updatePost: UpdatePostDto, userId: number) {
-        console.log(id, updatePost, userId)
+        // console.log(id, updatePost, userId)
         const [numberOfAffectedRows, [updatedPost]] = await this.postRepo.update<Post>(updatePost, { where: { id, userId }, returning: true });
         return {numberOfAffectedRows, updatedPost};
     }

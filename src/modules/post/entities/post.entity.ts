@@ -1,5 +1,5 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import { User } from "src/modules/users/entities/user.entity";
+import { User } from "../../../modules/users/entities/user.entity";
 
 @Table
 export class Post extends Model<Post>{
