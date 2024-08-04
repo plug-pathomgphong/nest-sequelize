@@ -10,10 +10,10 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   // app.useGlobalPipes(new ValidationPipe({ whitelist: true, }))
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Post example')
+    .setDescription('Post API description')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('posts')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
